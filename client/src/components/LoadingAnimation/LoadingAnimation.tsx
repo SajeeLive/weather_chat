@@ -6,7 +6,7 @@ interface LoadingAnimationProps {
   theme: WeatherTheme;
 }
 
-export function LoadingAnimation({ isLoading, theme }: LoadingAnimationProps) {
+export function LoadingAnimation({ isLoading, theme: _theme }: LoadingAnimationProps) {
   const [showReassurance, setShowReassurance] = useState(false);
 
   useEffect(() => {
@@ -20,23 +20,15 @@ export function LoadingAnimation({ isLoading, theme }: LoadingAnimationProps) {
 
   if (!isLoading) return null;
 
-  const animationClass = theme === 'sunny' ? 'sun'
-    : theme === 'rainy' ? 'raindrop'
-    : theme === 'stormy' ? 'bolt'
-    : 'cloud';
-
   return (
-    <div className="loading-animation" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 16px' }}>
-      <div
-        className={`loading-icon ${animationClass}-loading`}
-        style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--accent, #607d8b)', animation: 'pulse 1.2s ease-in-out infinite' }}
-        role="status"
-        aria-label="Loading"
-      />
+    <div className="loading-animation" role="status" aria-label="Loading response">
+      <div className="loading-dots">
+        <div className="loading-dot" />
+        <div className="loading-dot" />
+        <div className="loading-dot" />
+      </div>
       {showReassurance && (
-        <span style={{ opacity: 0.7, fontSize: '14px', fontStyle: 'italic' }}>
-          still thinking…
-        </span>
+        <span className="loading-label">still thinking…</span>
       )}
     </div>
   );
