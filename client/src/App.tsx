@@ -11,14 +11,22 @@ import { LoadingAnimation } from './components/LoadingAnimation/LoadingAnimation
 
 const queryClient = new QueryClient();
 
+// Generate once per page load — ties HTTP mutations to this WS session on the server
+const socketId = crypto.randomUUID();
+
 function createTrpcClient() {
-  const wsClient = createWSClient({ url: import.meta.env.VITE_SERVER_WS_URL as string });
+  const wsUrl = `${import.meta.env.VITE_SERVER_WS_URL as string}?socketId=${socketId}`;
+  const wsClient = createWSClient({ url: wsUrl });
+
   return trpc.createClient({
     links: [
       splitLink({
         condition: (op) => op.type === 'subscription',
         true: wsLink({ client: wsClient }),
-        false: httpBatchLink({ url: import.meta.env.VITE_SERVER_URL as string }),
+        false: httpBatchLink({
+          url: import.meta.env.VITE_SERVER_URL as string,
+          headers: () => ({ 'x-socket-id': socketId }),
+        }),
       }),
     ],
   });

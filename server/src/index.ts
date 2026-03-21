@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
@@ -24,6 +25,11 @@ validateEnv();
 
 const app = express();
 
+app.use(cors({
+  origin: process.env['CLIENT_ORIGIN'] ?? 'http://localhost:5173',
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'x-socket-id'],
+}));
 app.use(express.json());
 
 // Health check — available over plain HTTP (no tRPC overhead)
@@ -37,8 +43,8 @@ app.use(
   createExpressMiddleware({
     router: appRouter,
     createContext: ({ req }) => {
-      // WebSocket sessions set socketId via query param; HTTP calls won't have one
-      const socketId = (req.query['socketId'] as string | undefined) ?? undefined;
+      // Client sends socketId via x-socket-id header to tie HTTP mutations to WS session
+      const socketId = (req.headers['x-socket-id'] as string | undefined) ?? undefined;
       return { socketId };
     },
   }),
