@@ -11,7 +11,7 @@ import { logger } from './middleware/logger.js';
 // ─── Startup environment validation ───────────────────────────────────────
 
 function validateEnv(): void {
-  const required = ['OPENWEATHERMAP_API_KEY', 'ANTHROPIC_API_KEY'];
+  const required = ['OPENWEATHERMAP_API_KEY', 'ANTHROPIC_API_KEY','CLIENT_ORIGIN'];
   const missing = required.filter((key) => !process.env[key]);
   if (missing.length > 0) {
     logger.fatal({ missing }, `Missing required environment variables: ${missing.join(', ')}. Exiting.`);
@@ -26,7 +26,7 @@ validateEnv();
 const app = express();
 
 app.use(cors({
-  origin: process.env['CLIENT_ORIGIN'] ?? 'http://localhost:5173',
+  origin: process.env['CLIENT_ORIGIN'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'x-socket-id'],
 }));

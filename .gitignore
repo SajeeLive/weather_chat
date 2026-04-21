@@ -8,8 +8,6 @@ build/
 out/
 
 # Environment variables — never commit secrets
-.env
-.env.local
 .env.*.local
 
 # Logs
@@ -24,10 +22,12 @@ logs/
 Thumbs.db
 
 # Editor
-.vscode/
 .idea/
 *.swp
 *.tmp
+
+# Claude Code
+.claude/
 
 # Test coverage
 coverage/
@@ -37,3 +37,4 @@ client/.vite/
 client/node_modules/
 
 server/node_modules/
+config.bat
